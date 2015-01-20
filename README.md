@@ -31,7 +31,7 @@ port: port number
 
 cronTime: SS MM HH * * *
 
-timeZone: any time valid zome
+timeZone: any valid time zone
 
 url: link/url for google public api
 
