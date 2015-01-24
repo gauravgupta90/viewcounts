@@ -43,6 +43,7 @@ exports.getViews = function(req, res, next) {
         return next(err);
     } else {
         var count;
+        console.log("Current Date: "+req.body.date);
         Views.find({
             date: req.body.date
         }, function(err, views) {
@@ -53,10 +54,10 @@ exports.getViews = function(req, res, next) {
             if (views[0] === undefined)
                 res.end("No current date found");
             else count = views[0].count;
-            var date = new Date(req.body.date).getDate() - 1;
-            var year = new Date(req.body.date).getYear();
-            var month = new Date(req.body.date).getMonth();
-            var prev = year + "-" + month + "-" + date;
+
+            var exploded = req.body.date.split('-');
+            var prev = exploded[0] + "-"+ exploded[1] + "-" + (exploded[2] - 1);
+            
             Views.find({
                 date: prev
             }, function(err, views) {
