@@ -11,6 +11,20 @@ Run the following command in 'root' directory of an app in command prompt.
 
 npm install
 
+### Create Database
+
+CREATE TABLE 'test'.'views' (
+
+  'id' INT NOT NULL AUTO_INCREMENT,
+
+  'username' VARCHAR(45) NOT NULL,
+
+  'count' VARCHAR(45) NOT NULL,
+
+  'date' DATE NOT NULL,
+
+  PRIMARY KEY ('id'));
+
 ### Run an app
 
 ###### *Run Server*
@@ -33,6 +47,8 @@ cronTime: SS MM HH * * *
 
 timeZone: any valid time zone
 
-url: link/url for google public api
+apiKey: apiKey
+
+
 
 

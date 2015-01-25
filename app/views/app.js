@@ -4,16 +4,29 @@ angular.module('app', [
         'ui.bootstrap'
     ])
     .controller('MainCtrl', function($scope, $http, $filter) {
-        $scope.scheduleDate = new Date();
+        $scope.youtube = {};
+        $scope.youtube.date = new Date();
 
-        $scope.getScheduleInfo = function() {
-            var date = $filter('date')($scope.scheduleDate, 'yyyy-MM-dd');
+        $scope.getScheduleInfo = function(youtube, form) {
 
-            $http.post('/getViews', {
-                    "date": date
-                })
+            if (form.$valid) {
+                youtube.date = $filter('date')(youtube.date, 'yyyy-MM-dd');
+                $http.post('/getViews', youtube)
+                    .then(function(data) {
+                        $scope.views = data.data;
+                        console.log(data);
+                    })
+                    .catch(function(err) {
+                        alert(err)
+                    })
+            }
+
+        }
+
+        var getUserList = function() {
+            $http.get('/getUsername')
                 .then(function(data) {
-                    $scope.views = data.data;
+                    $scope.userList = data.data;
                     console.log(data);
                 })
                 .catch(function(err) {
@@ -21,6 +34,7 @@ angular.module('app', [
                 })
         }
 
+        getUserList();
         $scope.formats = ['dd-MMMM-yyyy', 'yyyy-MM-dd', 'dd.MM.yyyy', 'shortDate'];
         $scope.format = $scope.formats[1];
     });
