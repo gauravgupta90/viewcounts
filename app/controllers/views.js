@@ -42,7 +42,6 @@ job.start();
 exports.getViews = function(req, res, next) {
 
     var request = req.body;
-    console.log(req.body);
     if (typeof(request) !== 'object' || req.get('Content-Type') != "application/json;charset=UTF-8") {
         var err = new Object();
         err.code = 400;
