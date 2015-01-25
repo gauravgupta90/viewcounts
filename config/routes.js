@@ -8,5 +8,7 @@ module.exports = function(app) {
 
     app.post('/getViews', views.getViews);
 
+    app.post('/getTotalCount', views.getTotalCount);
+
     app.get('/getUsername', views.getUsername);
 };

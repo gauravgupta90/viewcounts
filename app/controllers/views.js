@@ -5,10 +5,9 @@ var db = require('orm').db,
     config = require('../../config/config'),
     username = require('../../config/username').username,
     google = require('googleapis'),
-    youtube = google.youtube('v3');
+    youtube = google.youtube('v3'),
+    CronJob = require('cron').CronJob;
 
-
-var CronJob = require('cron').CronJob;
 var job = new CronJob({
     cronTime: config.cronTime,
     onTick: function() {
@@ -96,3 +95,24 @@ exports.getViews = function(req, res, next) {
 exports.getUsername = function(req, res) {
     res.end(JSON.stringify(username));
 }
+
+exports.getTotalCount = function(req, res, next) {
+    var request = req.body;
+    if (typeof(request) !== 'object' || req.get('Content-Type') != "application/json;charset=UTF-8") {
+        var err = new Object();
+        err.code = 400;
+        err.message = 'Invalid request object';
+        console.log(err);
+        return next(err);
+    } else {
+
+        youtube.channels.list({
+            auth: config.apiKey,
+            part: 'statistics',
+            forUsername: req.body.username
+        }, function(err, user) {
+            if (user.items.length === 0) return res.end(JSON.stringify("No Result Found"));
+            res.end(JSON.stringify(parseInt(user.items[0].statistics.viewCount)));
+        });
+    }
+};

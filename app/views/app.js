@@ -8,13 +8,11 @@ angular.module('app', [
         $scope.youtube.date = new Date();
 
         $scope.getScheduleInfo = function(youtube, form) {
-
             if (form.$valid) {
                 youtube.date = $filter('date')(youtube.date, 'yyyy-MM-dd');
                 $http.post('/getViews', youtube)
                     .then(function(data) {
                         $scope.views = data.data;
-                        console.log(data);
                     })
                     .catch(function(err) {
                         alert(err)
@@ -23,11 +21,22 @@ angular.module('app', [
 
         }
 
+        $scope.getScheduleData = function(youtube, form) {
+            if (form.$valid) {
+                $http.post('/getTotalCount', youtube)
+                    .then(function(data) {
+                        $scope.views = data.data;
+                    })
+                    .catch(function(err) {
+                        alert(err)
+                    })
+            }
+        }
+
         var getUserList = function() {
             $http.get('/getUsername')
                 .then(function(data) {
                     $scope.userList = data.data;
-                    console.log(data);
                 })
                 .catch(function(err) {
                     alert(err)
