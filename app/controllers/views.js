@@ -1,48 +1,56 @@
 var db = require('orm').db,
     Views = db.models.views,
     request = require('request'),
+    async = require('async'),
     config = require('../../config/config'),
     username = require('../../config/username').username,
-    google = require('googleapis');
-var youtube = google.youtube('v3');
+    google = require('googleapis'),
+    youtube = google.youtube('v3');
 
 
 var CronJob = require('cron').CronJob;
 var job = new CronJob({
     cronTime: config.cronTime,
     onTick: function() {
-        var j = 0;
-        for (var i = 0; i < username.length; i++) {
+        var list = [];
+        async.each(username, function(file, callback) {
             youtube.channels.list({
                 auth: config.apiKey,
                 part: 'statistics',
-                forUsername: username[i]
+                forUsername: file
             }, function(err, user) {
                 var query = {};
-                query['username'] = username[j];
+                query['username'] = file;
                 query['count'] = user.items[0].statistics.viewCount;
                 query['date'] = new Date();
+                list.push(query);
+                callback();
+            });
 
-                Views.create(query, function(err, result) {
+        }, function(err) {
+            if (err) {
+                console.log(err);
+            } else {
+                Views.create(list, function(err, result) {
                     if (err) {
                         throw new Error(err);
                         return;
                     }
                     console.log("Sucessfull");
                 });
-                j++;
-            });
-        }
+            }
+        });
+
     },
     start: false,
     timeZone: config.timeZone
 });
 job.start();
 
-exports.getViews = function(req, res, next) {
 
+
+exports.getViews = function(req, res, next) {
     var request = req.body;
-    console.log(req.body);
     if (typeof(request) !== 'object' || req.get('Content-Type') != "application/json;charset=UTF-8") {
         var err = new Object();
         err.code = 400;
